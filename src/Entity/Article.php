@@ -9,10 +9,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\ArticleController;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ArticleRepository;
 use ApiPlatform\Metadata\ApiResource;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -21,7 +23,15 @@ use Symfony\Component\Validator\Constraints as Assert;
     SearchFilter::class,properties: ['id'=>'exact']
 )]
 #[ApiResource(
-    operations: [new GetCollection()],
+    operations: [
+        new GetCollection(),
+        new Post(
+            uriTemplate: '/publish/{id}',
+            controller: ArticleController::class,
+            denormalizationContext: ['groups'=>'write:publish'],
+            name: 'publish'
+        )
+        ],
     normalizationContext: ['groups'=>'read:collection'],
     paginationItemsPerPage: 2,
 )]
@@ -43,7 +53,7 @@ class Article
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 5, minMessage: 'Gaat na')]
+    #[Assert\Length(min: 5, minMessage: 'Le slug must be more than 5 Char')]
     #[Groups(['post:item','read:item'])]
     private ?string $slug = null;
 
@@ -62,6 +72,10 @@ class Article
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[Groups(['post:item','edit:item','read:collection'])]
     private ?Category $category = null;
+
+    #[ORM\Column(type: Types::BOOLEAN ,options: ['default'=>0])]
+    #[Groups(['write:publish'])]
+    private ?bool $online = false;
 
     public function getId(): ?int
     {
@@ -136,6 +150,18 @@ class Article
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function isOnline(): ?bool
+    {
+        return $this->online;
+    }
+
+    public function setOnline(bool $online): self
+    {
+        $this->online = $online;
 
         return $this;
     }
