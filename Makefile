@@ -16,6 +16,8 @@ entity:
 	php bin/console make:entity
 controller:
 	php bin/console make:controller
+user:
+	php bin/console make:user
 fixture:
 	php bin/console make:fixture
 loadAll:
@@ -26,3 +28,9 @@ route:
 	php bin/console debug:route
 router:
 	php bin/console debug:router
+iJwt:
+	composer require lexik/jwt-authentication-bundle
+iFixture:
+	composer require orm-fixtures --dev
+generateKeyJwt:
+	php bin/console lexik:jwt:generate-keypair
