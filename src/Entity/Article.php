@@ -30,7 +30,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             controller: ArticleController::class,
             denormalizationContext: ['groups'=>'write:publish'],
             name: 'publish'
-        )
+        ),
+        new Get(
+            uriTemplate: '/count',
+            controller: ArticleController::class,
+            name: 'count'
+        ),
         ],
     normalizationContext: ['groups'=>'read:collection'],
     paginationItemsPerPage: 2,
