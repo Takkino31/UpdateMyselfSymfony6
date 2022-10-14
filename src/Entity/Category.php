@@ -24,7 +24,7 @@ class Category
     #[Groups(['read:collection'])]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Article::class)]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Article::class,cascade: ['persist'])]
     #[Groups(['read:item'])]
     private Collection $articles;
 

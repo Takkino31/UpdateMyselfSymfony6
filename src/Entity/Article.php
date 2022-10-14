@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -15,9 +17,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ApiFilter(
+    SearchFilter::class,properties: ['id'=>'exact']
+)]
 #[ApiResource(
     operations: [new GetCollection()],
-    normalizationContext: ['groups'=>'read:collection']
+    normalizationContext: ['groups'=>'read:collection'],
+    paginationItemsPerPage: 2,
 )]
 #[Get(normalizationContext: ['groups'=>'read:item'])]
 #[Put(denormalizationContext: ['groups'=>'edit:item'])]
